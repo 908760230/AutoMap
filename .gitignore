@@ -1,3 +1,6 @@
 .vs
+*.sln
 x64
 AutoMap/x64
+build
+Build

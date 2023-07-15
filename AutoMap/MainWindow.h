@@ -10,7 +10,7 @@ public:
 
 public:
 	void LoadDataFile();
-	std::tuple<QVector<QPoint>, unsigned int, unsigned int, unsigned int> parseData(const QVector<short>& data);
+	std::tuple<QVector<QPointF>, unsigned int, unsigned int, unsigned int> parseData(const QVector<unsigned short>& data);
 private:
 };
 

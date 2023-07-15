@@ -112,7 +112,7 @@ void quicksort(QVector<unsigned int> &ids, QVector<double> &dists, int left, int
 }
 
 
-Delaunator::Delaunator(const QVector<QPoint>& data)
+Delaunator::Delaunator(const QVector<QPointF>& data)
 {
     size_t count = data.size();
     m_coords.resize(count * 2);

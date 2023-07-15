@@ -5,7 +5,7 @@
 class Delaunator
 {
 public:
-	Delaunator(const QVector<QPoint>& data);
+	Delaunator(const QVector<QPointF>& data);
 	Delaunator(const Delaunator& other);
 
 	QVector<unsigned int> m_triangles;

@@ -11,7 +11,7 @@ TriangleMesh::TriangleMesh(const MeshInitializer& init)
 	update();
 }
 
-MeshInitializer TriangleMesh::addGhostStructure(QVector<QPoint>& points,const Delaunator& delaunator, int numBoundaryPoints)
+MeshInitializer TriangleMesh::addGhostStructure(QVector<QPointF>& points,const Delaunator& delaunator, int numBoundaryPoints)
 {
     int numSolidSides = delaunator.m_triangles.size();
 
@@ -26,8 +26,8 @@ MeshInitializer TriangleMesh::addGhostStructure(QVector<QPoint>& points,const De
     }
 
     unsigned int r_ghost = points.size();
-    QVector<QPoint> newpoints = points;
-    newpoints.push_back(QPoint(std::numeric_limits<int>::quiet_NaN(), std::numeric_limits<int>::quiet_NaN()));
+    QVector<QPointF> newpoints = points;
+    newpoints.push_back(QPointF(std::numeric_limits<int>::quiet_NaN(), std::numeric_limits<int>::quiet_NaN()));
     QVector<int> r_newstart_s(numSolidSides + 3 * numUnpairedSides, 0);
     for(unsigned int index =0; index < delaunator.m_triangles.size();index++)
         r_newstart_s[index] = delaunator.m_triangles[index];
@@ -63,4 +63,48 @@ MeshInitializer TriangleMesh::addGhostStructure(QVector<QPoint>& points,const De
 
 void TriangleMesh::update()
 {
+    numSides = m_triangles.size();
+    numRegions = m_vertex_r.size();
+    numSolidRegions = numRegions - 1; // TODO: only if there are ghosts
+    numTriangles = numSides / 3;
+    numSolidTriangles = numSolidSides / 3;
+
+    if (m_vertex_t.size() < numTriangles) {
+        // Extend this array to be big enough
+        int numOldTriangles = m_vertex_t.size();
+        int numNewTriangles = numTriangles - numOldTriangles;
+        QVector<QPointF> tmpVector(m_vertex_t.size() + numNewTriangles, {0,0});
+        for (int t = 0; t < numOldTriangles; t++) {
+            tmpVector[t] = m_vertex_t[t];
+        }
+    }
+
+    // Construct an index for finding sides connected to a region
+    m_s_of_r.resize(numRegions);
+    for (int s = 0; s < m_triangles.size(); s++) {
+        int endpoint = m_triangles[s_next_s(s)];
+        if (m_s_of_r[endpoint] == 0 || m_halfedges[s] == -1) {
+            m_s_of_r[endpoint] = s;
+        }
+    }
+
+    // Construct triangle coordinates
+    for (int s = 0; s < m_triangles.size(); s += 3) {
+        int t = s / 3;
+        auto a = m_vertex_r[m_triangles[s]];
+        auto b = m_vertex_r[m_triangles[s + 1]];
+        auto c = m_vertex_r[m_triangles[s + 2]];
+        if (is_ghost_s(s)) {
+            // ghost triangle center is just outside the unpaired side
+            double dx = b.x() - a.x(), dy = b.y() - a.y();
+            double scale = 10.0 / sqrtf(dx * dx + dy * dy); // go 10units away from side
+            m_vertex_t[t].setX(0.5 * (a.x() + b.x()) + dy * scale);
+            m_vertex_t[t].setY(0.5 * (a.y() + b.y()) - dx * scale);
+        }
+        else {
+            // solid triangle center is at the centroid
+            m_vertex_t[t].setX((a.x() + b.x() + c.x()) / 3);
+            m_vertex_t[t].setY((a.y() + b.y() + c.y()) / 3);
+        }
+    }
 }
