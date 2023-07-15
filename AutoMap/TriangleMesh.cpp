@@ -61,6 +61,16 @@ MeshInitializer TriangleMesh::addGhostStructure(QVector<QPointF>& points,const D
     };
 }
 
+QVector<unsigned int> TriangleMesh::r_around_t(int t)
+{
+    QVector<unsigned int> r_out;
+    r_out.resize(3); 
+    for (int i = 0; i < 3; i++) { 
+        r_out[i] = m_triangles[3 * t + i];
+    }
+    return r_out;
+}
+
 void TriangleMesh::update()
 {
     numSides = m_triangles.size();
@@ -80,11 +90,11 @@ void TriangleMesh::update()
     }
 
     // Construct an index for finding sides connected to a region
-    m_s_of_r.resize(numRegions);
+    s_of_r.resize(numRegions);
     for (int s = 0; s < m_triangles.size(); s++) {
         int endpoint = m_triangles[s_next_s(s)];
-        if (m_s_of_r[endpoint] == 0 || m_halfedges[s] == -1) {
-            m_s_of_r[endpoint] = s;
+        if (s_of_r[endpoint] == 0 || m_halfedges[s] == -1) {
+            s_of_r[endpoint] = s;
         }
     }
 

@@ -56,20 +56,28 @@ public:
 	unsigned int numTriangles;
 	unsigned int numSolidTriangles;
 	unsigned int numBoundaryRegions;
+	QVector<unsigned char> is_boundary_t;
+	QVector<double> length_s;
+	QVector<int> s_of_r;
 
 	TriangleMesh(const MeshInitializer &init);
 
 	static MeshInitializer addGhostStructure(QVector<QPointF> &points, const Delaunator &delaunator, int numBoundaryPoints);
 	bool is_ghost_s(int s){ return s >= numSolidSides; }
-
+	QVector<unsigned int> r_around_t(int t);
+	bool is_boundary_r(int r){ return r < numBoundaryRegions; }
+	unsigned int r_begin_s(unsigned int s) { return m_triangles[s]; }
+	unsigned int r_end_s(unsigned int s){ return m_triangles[s_next_s(s)]; }
+	double x_of_r(unsigned int r) { return m_vertex_r[r].x(); }
+	double y_of_r(unsigned int r ) { return m_vertex_r[r].y(); }
+	int t_inner_s(int s){ return t_from_s(s); }
 private:
 	void update();
 	static int s_next_s(int s){ return (s % 3 == 2) ? s - 2 : s + 1; }
-
+	static int t_from_s(int s){ return (s / 3) | 0; }
 private:
 	QVector<int> m_halfedges;
 	QVector<unsigned int> m_triangles;
-	QVector<int> m_s_of_r;
 	QVector<QPointF> m_vertex_t;
 	QVector<QPointF> m_vertex_r;
 	//_options: any; // any other information we need to carry

@@ -1,12 +1,20 @@
 #pragma once
-#include <qwidget.h>
-class DisplayWidget :public QWidget
+#include <qopenglwidget.h>
+#include <qopenglextrafunctions.h>
+#include <qopenglfunctions.h>
+
+class DisplayWidget :public QOpenGLWidget, protected QOpenGLFunctions
 {
 	Q_OBJECT
 public:
-	DisplayWidget();
+	DisplayWidget(QWidget* parent = nullptr);
 	~DisplayWidget();
 
+protected:
+	void initializeGL() override;
+	void resizeGL(int w, int h) override;
+
+	void paintGL() override;
 private:
 
 };

@@ -54,34 +54,41 @@ void MainWindow::LoadDataFile()
 	TriangleMesh mesh(meshInit);
 	qDebug() << "triangles = " << mesh.numTriangles <<" regions = " << mesh.numRegions;
 
-	//mesh.is_boundary_t = new Int8Array(mesh.numTriangles);
-	//for (let t = 0; t < mesh.numTriangles; t++) {
-	//	mesh.is_boundary_t[t] = mesh.r_around_t(t).some(r = > mesh.is_boundary_r(r)) ? 1 : 0;
-	//}
+	mesh.is_boundary_t.resize(mesh.numTriangles);
+	for (int t = 0; t < mesh.numTriangles; t++) {
+		mesh.is_boundary_t[t] = 0;
+		auto data = mesh.r_around_t(t);
+		for (auto number : data) {
+			if (mesh.is_boundary_r(number)) {
+				mesh.is_boundary_t[t] = 1;
+				break;
+			}
+		}
+	}
 
-	//mesh.length_s = new Float32Array(mesh.numSides);
-	//for (let s = 0; s < mesh.numSides; s++) {
-	//	let r1 = mesh.r_begin_s(s),
-	//		r2 = mesh.r_end_s(s);
-	//	let dx = mesh.x_of_r(r1) - mesh.x_of_r(r2),
-	//		dy = mesh.y_of_r(r1) - mesh.y_of_r(r2);
-	//	mesh.length_s[s] = Math.sqrt(dx * dx + dy * dy);
-	//}
+	mesh.length_s.resize(mesh.numSides);
+	for (unsigned int s = 0; s < mesh.numSides; s++) {
+		unsigned int r1 = mesh.r_begin_s(s),
+			r2 = mesh.r_end_s(s);
+		double dx = mesh.x_of_r(r1) - mesh.x_of_r(r2),
+			dy = mesh.y_of_r(r1) - mesh.y_of_r(r2);
+		mesh.length_s[s] = sqrtf(dx * dx + dy * dy);
+	}
 
-	//// NOTE: these are all contigious so it could be shortened to a range
-	//// (they were not contiguous in earlier versions of mapgen4, so that's
-	//// why it's an array of indices)
-	//let r_peaks = Array.from(
-	//	{ length: numMountainPoints },
-	//	(_, index) = > index + numExteriorBoundaryPoints + numInteriorBoundaryPoints);
+	// NOTE: these are all contigious so it could be shortened to a range
+	// (they were not contiguous in earlier versions of mapgen4, so that's
+	// why it's an array of indices)
+	QVector<unsigned int> r_peaks(numMountainPoints,0);
+	for (int i = 0; i < numMountainPoints; i++) {
+		r_peaks[i] = i + numExteriorBoundaryPoints + numInteriorBoundaryPoints;
+	}
 
-
-	//// Poisson disc chooses mountain regions but we actually need mountain triangles
-	//// so we'll just pick one neighboring triangle for each region
-	//let t_peaks = [];
-	//for (let r of r_peaks) {
-	//	t_peaks.push(mesh.t_inner_s(mesh._s_of_r[r]));
-	//}
+	// Poisson disc chooses mountain regions but we actually need mountain triangles
+	// so we'll just pick one neighboring triangle for each region
+	QVector<int> t_peaks;
+	for (auto r : r_peaks) {
+		t_peaks.push_back(mesh.t_inner_s(mesh.s_of_r[r]));
+	}
 
 	//return { mesh, t_peaks };
 }

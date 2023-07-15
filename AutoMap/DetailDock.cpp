@@ -3,13 +3,12 @@
 #include <qwidget.h>
 #include <qlayout.h>
 
+
+#include "ToolWidget.h"
+
 DetailDock::DetailDock()
 {
-	QWidget* mainWidget = new QWidget;
-	QVBoxLayout* vbl = new  QVBoxLayout(mainWidget);
-	QLabel* lable = new QLabel("DetailWidget");
-	vbl->addWidget(lable);
-
+	ToolWidget* mainWidget = new ToolWidget;
 	setWidget(mainWidget);
 }
 

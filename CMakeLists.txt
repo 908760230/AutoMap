@@ -22,7 +22,7 @@ set(CMAKE_AUTORCC ON)
 
 
 
-find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Widgets OpenGL REQUIRED)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
