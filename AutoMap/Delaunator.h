@@ -1,6 +1,7 @@
 #pragma once
 
 #include <qvector.h>
+#include <qpoint.h>
 
 class Delaunator
 {

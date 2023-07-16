@@ -22,7 +22,13 @@ MainWindow::MainWindow()
 	QMenu* menuFile = new  QMenu(tr("File"));
 	menuFile->addAction(actionLoadDataFile);
 	menuBar()->addMenu(menuFile);
-	
+
+	QAction* actionToolWindow = new QAction("ToolWindow");
+	QAction* actionOutputWidget = new QAction("OutputWindow");
+	QMenu* menuWindow = new QMenu(tr("Window"));
+	menuWindow->addAction(actionToolWindow);
+	menuWindow->addAction(actionOutputWidget);
+	menuBar()->addMenu(menuWindow);
 
 	DisplayWidget* displayWidget = new DisplayWidget;
 	setCentralWidget(displayWidget);
