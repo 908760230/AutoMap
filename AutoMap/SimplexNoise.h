@@ -1,43 +1,6 @@
 #pragma once
 #include <qvector.h>
 
-
-// double seems to be faster than single or int's
-// probably because most operations are in double precision
-//const grad3 = /*#__PURE__*/ new Float64Array([1, 1, 0,
-//    -1, 1, 0,
-//    1, -1, 0,
-//
-//    -1, -1, 0,
-//    1, 0, 1,
-//    -1, 0, 1,
-//
-//    1, 0, -1,
-//    -1, 0, -1,
-//    0, 1, 1,
-//
-//    0, -1, 1,
-//    0, 1, -1,
-//    0, -1, -1]);
-
-// double is a bit quicker here as well
-//const grad4 = /*#__PURE__*/ new Float64Array([0, 1, 1, 1, 0, 1, 1, -1, 0, 1, -1, 1, 0, 1, -1, -1,
-//    0, -1, 1, 1, 0, -1, 1, -1, 0, -1, -1, 1, 0, -1, -1, -1,
-//    1, 0, 1, 1, 1, 0, 1, -1, 1, 0, -1, 1, 1, 0, -1, -1,
-//    -1, 0, 1, 1, -1, 0, 1, -1, -1, 0, -1, 1, -1, 0, -1, -1,
-//    1, 1, 0, 1, 1, 1, 0, -1, 1, -1, 0, 1, 1, -1, 0, -1,
-//    -1, 1, 0, 1, -1, 1, 0, -1, -1, -1, 0, 1, -1, -1, 0, -1,
-//    1, 1, 1, 0, 1, 1, -1, 0, 1, -1, 1, 0, 1, -1, -1, 0,
-//    -1, 1, 1, 0, -1, 1, -1, 0, -1, -1, 1, 0, -1, -1, -1, 0]);
-
-/**
- * A random() function, must return a number in the interval [0,1), just like Math.random().
- */
-//export type RandomFn = () = > number;
-
-
-//export type NoiseFunction2D = (x: number, y : number) = > number;
-
 /**
  * Creates a 2D noise function
  * @param random the random function that will be used to build the permutation table
@@ -58,6 +21,7 @@ public:
  */
     double get(int x, int y) const;
 private:
+    QVector<unsigned char> m_perm;
     QVector<int> m_permGrad2x;
     QVector<int> m_permGrad2y;
 };
@@ -70,7 +34,7 @@ private:
   */
 class Noise3D {
 public:
-    Noise3D();
+    Noise3D(int seed);
     ~Noise3D() {};
     /**
  * Samples the noise field in three dimensions
@@ -82,6 +46,11 @@ public:
  * @returns a number in the interval [-1, 1]
  */
     double get(int x, int y, int z);
+private:
+    QVector<unsigned char> m_perm;
+    QVector<int> m_permGrad3x;
+    QVector<int> m_permGrad3y;
+    QVector<int> m_permGrad3z;
 };
 
 /**
@@ -92,7 +61,7 @@ public:
 class Noise4D
 {
 public:
-    Noise4D();
+    Noise4D(int seed);
     ~Noise4D() {};
     /**
  * Samples the noise field in four dimensions
@@ -105,4 +74,11 @@ public:
  * @returns a number in the interval [-1, 1]
  */
     double get(int x, int y, int z, int w);
+
+private:
+    QVector<unsigned char> m_perm;
+    QVector<int> m_permGrad4x;
+    QVector<int> m_permGrad4y;
+    QVector<int> m_permGrad4z;
+    QVector<int> m_permGrad4w;
 };
