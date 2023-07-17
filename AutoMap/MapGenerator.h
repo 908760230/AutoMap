@@ -17,4 +17,5 @@ private:
 	int m_island = 0;
 	bool m_userHasPainted = false;
 	QVector<double> m_elevation;
+	QVector<char> m_colormap;
 };

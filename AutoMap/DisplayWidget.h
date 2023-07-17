@@ -9,7 +9,8 @@ class DisplayWidget :public QOpenGLWidget, protected QOpenGLFunctions
 public:
 	DisplayWidget(QWidget* parent = nullptr);
 	~DisplayWidget();
-
+	static int getWidth();
+	static int getHeight();
 protected:
 	void initializeGL() override;
 	void resizeGL(int w, int h) override;

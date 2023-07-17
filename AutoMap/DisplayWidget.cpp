@@ -1,14 +1,27 @@
 #include "DisplayWidget.h"
 #include <qlabel.h>
 
+DisplayWidget* instance = nullptr;
+
 DisplayWidget::DisplayWidget(QWidget* parent):QOpenGLWidget(parent)
 {
+	instance = this;
 	setFixedSize(800, 600);
 	//QLabel* lable = new QLabel("DisplayWidget", this);
 }
 
 DisplayWidget::~DisplayWidget()
 {
+}
+
+int DisplayWidget::getWidth()
+{
+	return instance->width();
+}
+
+int DisplayWidget::getHeight()
+{
+	return instance->height();
 }
 
 void DisplayWidget::initializeGL()
