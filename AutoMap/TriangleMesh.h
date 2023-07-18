@@ -68,8 +68,10 @@ public:
 	bool is_boundary_r(int r){ return r < numBoundaryRegions; }
 	unsigned int r_begin_s(unsigned int s) { return m_triangles[s]; }
 	unsigned int r_end_s(unsigned int s){ return m_triangles[s_next_s(s)]; }
-	double x_of_r(unsigned int r) { return m_vertex_r[r].x(); }
-	double y_of_r(unsigned int r ) { return m_vertex_r[r].y(); }
+	double x_of_r(unsigned int r) const { return m_vertex_r[r].x(); }
+	double y_of_r(unsigned int r ) const { return m_vertex_r[r].y(); }
+	double x_of_t(unsigned int t) const { return m_vertex_t[t].x(); }
+	double y_of_t(unsigned int t) const { return m_vertex_t[t].y(); }
 	int t_inner_s(int s){ return t_from_s(s); }
 private:
 	void update();

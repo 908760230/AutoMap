@@ -1,4 +1,8 @@
 #include "Render.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <stdexcept>
 
 const char* landFrag =
 "uniform sampler2D u_water;\n"
@@ -187,14 +191,41 @@ const char* finalVert =
 "	gl_Position = vec4(2.0 * v_uv - 1.0, 0.0, 1.0);\n"
 "}\n";
 
-Render::Render(TriangleMesh& mesh)
+Render::Render(const TriangleMesh& mesh)
 {
+	m_TopDown = glm::translate(glm::mat4(1.0f), glm::vec3(1, -1, 0));
+	m_TopDown = glm::scale(m_TopDown, glm::vec3(1 / 500.0, 1 / 500.0, 1));
+	a_quad_xy.resize(2 * (mesh.numRegions + mesh.numTriangles));
+	a_quad_em.resize(2 * (mesh.numRegions + mesh.numTriangles));
+	quad_elements.resize(3 * mesh.numSolidSides);
+	a_river_xyuv.resize(1.5 * 3 * 4 * mesh.numSolidTriangles);
+	setMeshGeometry(mesh);
+}
 
+Render::~Render()
+{
 }
 
 glm::vec2 Render::screenToWorld(double x, double y)
 {
-	return glm::vec2();
+	auto result = glm::vec4(x * 2 - 1, 1 - y * 2, 0, 1) * m_inverse_projection;
+	return glm::vec2(result.x,result.y);
+}
+
+void Render::setMeshGeometry(const TriangleMesh& mesh)
+{
+	if (a_quad_xy.size() !=  2 * (mesh.numRegions + mesh.numTriangles)) { 
+		throw std::runtime_error("wrong size"); 
+	}
+	int p = 0;
+	for (int r = 0; r < mesh.numRegions; r++) {
+		a_quad_xy[p++] = mesh.x_of_r(r);
+		a_quad_xy[p++] = mesh.y_of_r(r);
+	}
+	for (int t = 0; t < mesh.numTriangles; t++) {
+		a_quad_xy[p++] = mesh.x_of_t(t);
+		a_quad_xy[p++] = mesh.y_of_t(t);
+	}
 }
 
 void Render::drawLand()
