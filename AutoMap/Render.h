@@ -30,4 +30,6 @@ private:
 	QOpenGLShaderProgram m_shaderProgramDepth;
 	QOpenGLShaderProgram m_shaderProgramDrape;
 	QOpenGLShaderProgram m_shaderProgramFinal;
+
+	unsigned int m_frameBuffer;
 };
